@@ -1,17 +1,17 @@
-bfs :: [(Int, [Int])] -> (Int, [Int]) -> [(Int, [Int], Int)]
-bfs graph start = fst (calculateDistances (map (\(x, y) -> (x, y, -1)) graph, [(\(x, y) -> (x, y, 0)) start]))
+bfs :: Eq a => [(a, [a])] -> (a, [a]) -> a -> [(a, [a], a, Int)]
+bfs graph start dft = fst (calculateDistances (map (\(x, y) -> (x, y, dft, -1)) graph, [(\(x, y) -> (x, y, dft, 0)) start]))
 
-calculateDistances :: ([(Int, [Int], Int)], [(Int, [Int], Int)]) -> ([(Int, [Int], Int)], [(Int, [Int], Int)])
+calculateDistances :: Eq a => ([(a, [a], a, Int)], [(a, [a], a, Int)]) -> ([(a, [a], a, Int)], [(a, [a], a, Int)])
 calculateDistances fl@(graph, []) = fl
-calculateDistances (graph, ((hd@(topId, topChildren, topDistance)):stack)) = calculateDistances (newGraph, stack ++ addStack)
+calculateDistances (graph, (hd:stack)) = calculateDistances (newGraph, stack ++ addStack)
  where
   (newGraph, addStack) = processNode graph hd
 
-processNode :: [(Int, [Int], Int)] -> (Int, [Int], Int) -> ([(Int, [Int], Int)], [(Int, [Int], Int)])
+processNode :: Eq a => [(a, [a], a, Int)] -> (a, [a], a, Int) -> ([(a, [a], a, Int)], [(a, [a], a, Int)])
 processNode [] _ = ([], [])
-processNode (hd@(topId, topChildren, topDistance):graph) nd@(id, children, distance)
+processNode (hd@(topId, topChildren, _, topDistance):graph) nd@(id, children, parent, distance)
  | (elem topId children) && (topDistance == -1) = ([newNode] ++ newGraph, [newNode] ++ stack)
  | otherwise = ([hd] ++ newGraph, stack)
  where
    (newGraph, stack) = processNode graph nd
-   newNode = (topId, topChildren, distance + 1)
+   newNode = (topId, topChildren, id, distance + 1)
