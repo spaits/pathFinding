@@ -4,7 +4,7 @@ bfs graph start dft = fst $ calculateDistances (newGraph, filter (\(x, _, _, _) 
   newGraph = map (\(x,y) -> (x, y, dft, if x == start then 0 else -1)) graph
 
 calculateDistances :: Eq a => ([(a, [a], a, Int)], [(a, [a], a, Int)]) -> ([(a, [a], a, Int)], [(a, [a], a, Int)])
-calculateDistances fl@(graph, []) = fl
+calculateDistances fl@(_, []) = fl
 calculateDistances (graph, (hd:stack)) = calculateDistances (newGraph, stack ++ addStack)
  where
   (newGraph, addStack) = processNode graph hd
